@@ -1,369 +1,863 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>System Plate - Segurança Condominial</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=Orbitron:wght@700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary: #00d2ff;
-            --secondary: #3a7bd5;
-            --accent: #25D366;
-            --bg-dark: #0a0f1a;
-            --card-bg: rgba(255, 255, 255, 0.05);
-            --glass-border: rgba(255, 255, 255, 0.1);
-            --neon-glow: #00d2ff;
-            --red-neon: #ff0000;
-        }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        body {
-            background-color: var(--bg-dark);
-            background-image: 
-                radial-gradient(at 0% 0%, rgba(58, 123, 213, 0.15) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, rgba(0, 210, 255, 0.1) 0px, transparent 50%);
-            color: #e0e6ed;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
+<title>System Plate - Segurança Condominial</title>
 
-        header {
-            padding: 40px 20px 10px;
-            text-align: center;
-        }
+<!-- SUPABASE -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-        .header-main {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 15px;
-        }
+<!-- FONTES -->
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=Orbitron:wght@700&display=swap" rel="stylesheet">
 
-        .logo-icon {
-            width: 52px;
-            height: 52px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 24px;
-            color: white;
-            box-shadow: 0 0 20px var(--red-neon);
-            animation: logoPulseRed 2s infinite alternate;
-        }
+<style>
 
-        @keyframes logoPulseRed {
-            from { box-shadow: 0 0 10px var(--red-neon); }
-            to { box-shadow: 0 0 25px var(--red-neon), 0 0 40px rgba(255, 0, 0, 0.5); }
-        }
+/* =========================
+   RESET
+========================= */
 
-        header h1 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 28px;
-            background: linear-gradient(to right, #fff, var(--primary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
 
-        .divider {
-            height: 1px;
-            width: 70%;
-            max-width: 300px;
-            margin: 0 auto;
-            background: linear-gradient(to right, transparent, var(--primary), transparent);
-            opacity: 0.4;
-        }
+/* =========================
+   VARIÁVEIS
+========================= */
 
-        .sub-titulo {
-            font-size: 0.70rem;
-            color: #fff;
-            font-weight: 600;
-            margin: 18px 0;
-            letter-spacing: 1px;
-            text-shadow: 0 0 5px var(--neon-glow);
-            animation: neonPulse 1.5s infinite alternate;
-        }
+:root{
+    --primary:#00d2ff;
+    --secondary:#3a7bd5;
+    --accent:#25D366;
+    --dark:#0a0f1a;
+    --glass:rgba(255,255,255,0.05);
+    --border:rgba(255,255,255,0.1);
+    --text:#e0e6ed;
+    --error:#ff4d4d;
+}
 
-        @keyframes neonPulse {
-            from { text-shadow: 0 0 4px var(--neon-glow); opacity: 0.8; }
-            to { text-shadow: 0 0 12px var(--neon-glow); opacity: 1; }
-        }
+/* =========================
+   BODY
+========================= */
 
-        nav {
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-            margin-top: 45px;
-            margin-bottom: 30px;
-        }
+body{
 
-        nav button {
-            padding: 12px 24px;
-            border-radius: 30px;
-            border: 1px solid var(--glass-border);
-            background: var(--card-bg);
-            color: white;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.3s;
-        }
+    font-family:'Plus Jakarta Sans',sans-serif;
 
-        nav button.active-nav { background: white; color: var(--bg-dark); border-color: white; }
+    background:
+    radial-gradient(circle at top left, rgba(58,123,213,0.2), transparent 40%),
+    radial-gradient(circle at bottom right, rgba(0,210,255,0.1), transparent 40%),
+    var(--dark);
 
-        .container { 
-            max-width: 420px; 
-            margin: 0 auto; 
-            padding: 0 20px 20px;
-            flex: 1;
-        }
-        
-        .card {
-            background: var(--card-bg);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            padding: 30px;
-            text-align: center;
-            display: none;
-        }
+    color:var(--text);
 
-        #pesquisa.card {
-            border: 1px solid var(--primary);
-            box-shadow: 0 0 15px rgba(0, 210, 255, 0.1);
-            animation: cardGlow 3s infinite alternate, fadeIn 0.4s ease-out;
-            display: block;
-        }
+    min-height:100vh;
 
-        @keyframes cardGlow {
-            from { border-color: rgba(0, 210, 255, 0.3); }
-            to { border-color: rgba(0, 210, 255, 0.8); box-shadow: 0 0 20px rgba(0, 210, 255, 0.2); }
-        }
+    display:flex;
+    flex-direction:column;
+}
 
-        .card.active { display: block; animation: fadeIn 0.4s ease-out; }
+/* =========================
+   HEADER
+========================= */
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+header{
+    text-align:center;
+    padding:35px 20px 20px;
+}
 
-        .placa-mercosul {
-            width: 160px;
-            height: 65px;
-            background: white;
-            border-radius: 6px;
-            border: 2px solid #333;
-            margin: 0 auto 30px;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            animation: pulsoMagnetico 2s infinite ease-in-out;
-        }
+.logo{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:15px;
+}
 
-        .placa-topo {
-            background: #003399; height: 18px; width: 100%;
-            display: flex; align-items: center; justify-content: center;
-            color: white; font-size: 8px; font-weight: 800; letter-spacing: 1px;
-        }
+.logo-icon{
 
-        .placa-corpo {
-            flex-grow: 1; display: flex; align-items: center; justify-content: center;
-            color: #111; font-size: 20px; font-weight: 900; letter-spacing: 2px;
-        }
+    width:55px;
+    height:55px;
 
-        @keyframes pulsoMagnetico {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
+    border-radius:14px;
 
-        .center-label {
-            display: block; text-align: center; margin-bottom: 15px;
-            font-size: 0.85rem; color: var(--primary); font-weight: 800;
-            text-transform: uppercase; letter-spacing: 1.5px;
-        }
+    background:linear-gradient(135deg,var(--primary),var(--secondary));
 
-        input {
-            width: 100%; padding: 14px; border-radius: 12px;
-            border: 1px solid var(--glass-border); background: rgba(0,0,0,0.4);
-            color: white; outline: none; font-size: 1.1rem; text-align: center;
-            margin-bottom: 20px;
-        }
+    display:flex;
+    align-items:center;
+    justify-content:center;
 
-        .btn {
-            width: 100%; padding: 16px; border: none; border-radius: 12px;
-            font-weight: 700; cursor: pointer; transition: 0.3s; font-size: 1rem;
-        }
+    font-size:24px;
+    font-family:'Orbitron',sans-serif;
 
-        .btn-primary { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; }
-        .btn-whatsapp { background: var(--accent); color: white; margin-top: 20px; }
+    color:white;
 
-        footer { 
-            text-align: center; 
-            padding: 10px 25px 25px; 
-            background: rgba(0,0,0,0.3); 
-        }
-        
-        .footer-text { font-size: 0.70rem; color: #8899a6; font-weight: 600; }
+    box-shadow:0 0 25px rgba(0,210,255,0.5);
+}
 
-        .input-group { text-align: left; margin-bottom: 15px; }
-        label { display: block; margin-bottom: 6px; font-size: 0.8rem; color: var(--primary); font-weight: 600; }
-        .resultado-box { margin-top: 20px; border-radius: 15px; overflow: hidden; background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); text-align: left; }
-        .info-item { padding: 14px; border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; font-size: 0.95rem; }
-        .info-item:last-child { border: none; }
-        .status { padding: 12px; border-radius: 10px; margin-top: 15px; text-align: center; font-size: 0.9rem;}
-        .error { background: rgba(255, 77, 77, 0.1); color: #ff4d4d; }
-        .success { background: rgba(37, 211, 102, 0.1); color: #25D366; }
-    </style>
+.logo h1{
+    font-size:30px;
+    font-family:'Orbitron',sans-serif;
+
+    background:linear-gradient(to right,#fff,var(--primary));
+
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+}
+
+.sub{
+    margin-top:15px;
+    font-size:0.8rem;
+    color:#b5c3d1;
+    letter-spacing:1px;
+}
+
+/* =========================
+   NAV
+========================= */
+
+nav{
+    display:flex;
+    justify-content:center;
+    gap:12px;
+
+    margin:25px 0;
+}
+
+nav button{
+
+    padding:12px 22px;
+
+    border:none;
+    border-radius:30px;
+
+    background:var(--glass);
+
+    border:1px solid var(--border);
+
+    color:white;
+
+    cursor:pointer;
+
+    font-weight:700;
+
+    transition:0.3s;
+}
+
+nav button.active{
+    background:white;
+    color:#000;
+}
+
+/* =========================
+   CONTAINER
+========================= */
+
+.container{
+    width:100%;
+    max-width:450px;
+
+    margin:auto;
+
+    padding:0 20px 30px;
+}
+
+/* =========================
+   CARD
+========================= */
+
+.card{
+
+    display:none;
+
+    background:var(--glass);
+
+    border:1px solid var(--border);
+
+    border-radius:25px;
+
+    backdrop-filter:blur(20px);
+
+    padding:30px;
+}
+
+.card.active{
+    display:block;
+}
+
+/* =========================
+   PLACA
+========================= */
+
+.placa{
+
+    width:170px;
+    height:70px;
+
+    margin:0 auto 25px;
+
+    background:white;
+
+    border-radius:8px;
+
+    overflow:hidden;
+
+    border:2px solid #333;
+}
+
+.placa-topo{
+
+    background:#003399;
+
+    color:white;
+
+    font-size:10px;
+
+    font-weight:800;
+
+    text-align:center;
+
+    padding:4px;
+}
+
+.placa-numero{
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    height:calc(100% - 20px);
+
+    color:#111;
+
+    font-size:24px;
+    font-weight:900;
+
+    letter-spacing:3px;
+}
+
+/* =========================
+   INPUTS
+========================= */
+
+.input-group{
+    margin-bottom:18px;
+}
+
+label{
+    display:block;
+    margin-bottom:8px;
+
+    color:var(--primary);
+
+    font-size:0.85rem;
+    font-weight:700;
+}
+
+input{
+
+    width:100%;
+
+    padding:14px;
+
+    border-radius:12px;
+
+    border:1px solid var(--border);
+
+    background:rgba(0,0,0,0.4);
+
+    color:white;
+
+    outline:none;
+
+    font-size:1rem;
+}
+
+/* =========================
+   BOTÕES
+========================= */
+
+.btn{
+
+    width:100%;
+
+    padding:15px;
+
+    border:none;
+
+    border-radius:14px;
+
+    cursor:pointer;
+
+    font-weight:800;
+
+    transition:0.3s;
+}
+
+.btn-primary{
+    background:linear-gradient(135deg,var(--primary),var(--secondary));
+    color:white;
+}
+
+.btn-primary:hover{
+    transform:translateY(-2px);
+}
+
+.btn-whatsapp{
+    margin-top:18px;
+    background:var(--accent);
+    color:white;
+}
+
+.btn-back{
+    margin-bottom:20px;
+
+    background:transparent;
+
+    border:1px solid var(--border);
+
+    color:white;
+
+    padding:10px 15px;
+
+    border-radius:12px;
+
+    cursor:pointer;
+}
+
+/* =========================
+   RESULTADO
+========================= */
+
+.resultado{
+
+    margin-top:20px;
+
+    border-radius:15px;
+
+    overflow:hidden;
+
+    border:1px solid var(--border);
+}
+
+.item{
+
+    display:flex;
+    justify-content:space-between;
+
+    padding:14px;
+
+    background:rgba(255,255,255,0.03);
+
+    border-bottom:1px solid var(--border);
+}
+
+.item:last-child{
+    border:none;
+}
+
+/* =========================
+   STATUS
+========================= */
+
+.status{
+
+    margin-top:18px;
+
+    padding:14px;
+
+    border-radius:12px;
+
+    text-align:center;
+
+    font-weight:700;
+}
+
+.success{
+    background:rgba(37,211,102,0.1);
+    color:#25D366;
+}
+
+.error{
+    background:rgba(255,77,77,0.1);
+    color:var(--error);
+}
+
+/* =========================
+   FOOTER
+========================= */
+
+footer{
+    text-align:center;
+    padding:20px;
+    font-size:0.75rem;
+    color:#8190a5;
+}
+
+</style>
 </head>
+
 <body>
 
 <header>
-    <div class="header-main">
-        <div class="logo-icon">S</div>
+
+    <div class="logo">
+
+        <div class="logo-icon">
+            S
+        </div>
+
         <h1>System Plate</h1>
+
     </div>
-    <div class="divider"></div>
-    <div class="sub-titulo">🛡️ LGPD • SISTEMA PROTEGIDO PARA USO INTERNO DO CONDOMÍNIO</div>
-    <div class="divider"></div>
+
+    <div class="sub">
+        🛡️ SISTEMA CLOUD PARA CONDOMÍNIO
+    </div>
+
 </header>
 
 <nav>
-    <button class="active-nav" onclick="abrirPagina('pesquisa', this)">🔍 Buscar</button>
-    <button onclick="abrirPagina('cadastro', this)">➕ Cadastrar</button>
+
+    <button
+    class="active"
+    id="btnPesquisa"
+    onclick="abrirPagina('pesquisa')">
+    🔍 Buscar
+    </button>
+
+    <button
+    id="btnCadastro"
+    onclick="abrirPagina('cadastro')">
+    ➕ Cadastrar
+    </button>
+
 </nav>
 
-<main class="container">
+<div class="container">
+
+    <!-- PESQUISA -->
+
     <section id="pesquisa" class="card active">
-        <div class="placa-mercosul">
-            <div class="placa-topo">BRASIL</div>
-            <div class="placa-corpo">SYS-2026</div>
+
+        <div class="placa">
+
+            <div class="placa-topo">
+                BRASIL
+            </div>
+
+            <div class="placa-numero" id="placaDisplay">
+                SYS2026
+            </div>
+
         </div>
 
         <div class="input-group">
-            <label class="center-label">Placa do Veículo</label>
-            <input type="text" id="placaPesquisa" placeholder="DIGITE A PLACA..." style="text-transform: uppercase;">
+
+            <label>Placa do Veículo</label>
+
+            <input
+            type="text"
+            id="placaPesquisa"
+            placeholder="Digite a placa">
+
         </div>
-        <button class="btn btn-primary" onclick="pesquisarVeiculo()">CONSULTAR AGORA</button>
+
+        <button
+        class="btn btn-primary"
+        onclick="pesquisarVeiculo()">
+
+        CONSULTAR AGORA
+
+        </button>
+
         <div id="resultadoPesquisa"></div>
-        <div id="areaWhatsApp"></div>
+
+        <div id="areaWhatsapp"></div>
+
     </section>
+
+    <!-- CADASTRO -->
 
     <section id="cadastro" class="card">
-        <h2 style="margin-bottom: 25px; font-size: 1.2rem; color: var(--primary);">📋 NOVO REGISTRO</h2>
+
+        <button
+        class="btn-back"
+        onclick="abrirPagina('pesquisa')">
+
+        ← Voltar
+
+        </button>
+
         <div class="input-group">
+
             <label>Placa</label>
-            <input type="text" id="placa" placeholder="Digite a placa" style="text-align: left; text-transform: uppercase;">
+
+            <input
+            type="text"
+            id="placa"
+            placeholder="ABC1234">
+
         </div>
+
         <div class="input-group">
+
             <label>Modelo / Cor</label>
-            <input type="text" id="modelo" placeholder="Ex: Corolla Branco" style="text-align: left;">
+
+            <input
+            type="text"
+            id="modelo"
+            placeholder="Corolla Branco">
+
         </div>
-        <div style="display: flex; gap: 10px;">
-            <div class="input-group" style="flex: 1;">
-                <label>Bloco</label>
-                <input type="text" id="bloco" placeholder="Nº" style="text-align: left;">
-            </div>
-            <div class="input-group" style="flex: 1;">
-                <label>Apto</label>
-                <input type="text" id="apartamento" placeholder="Nº" style="text-align: left;">
-            </div>
+
+        <div class="input-group">
+
+            <label>Bloco</label>
+
+            <input
+            type="text"
+            id="bloco"
+            placeholder="Bloco">
+
         </div>
-        <button class="btn btn-primary" onclick="cadastrarVeiculo()">SALVAR NO SISTEMA</button>
+
+        <div class="input-group">
+
+            <label>Apartamento</label>
+
+            <input
+            type="text"
+            id="apartamento"
+            placeholder="Apartamento">
+
+        </div>
+
+        <button
+        class="btn btn-primary"
+        id="btnSalvar"
+        onclick="cadastrarVeiculo()">
+
+        SALVAR NO SISTEMA
+
+        </button>
+
         <div id="statusCadastro"></div>
+
     </section>
-</main>
+
+</div>
 
 <footer>
-    <div class="footer-text">Francisco © 2026 | Gestão de Acesso v0.03</div>
+Francisco © 2026 | Cloud DB v2.0
 </footer>
 
 <script>
-    // Carrega do localStorage ou inicia com exemplo se estiver vazio
-    let veiculos = JSON.parse(localStorage.getItem("veiculos")) || [
-        { placa:"ABC1D23", modelo:"Corsa Preto", bloco:"1", apartamento:"101" }
-    ];
 
-    function abrirPagina(id, btn){
-        document.querySelectorAll(".card").forEach(c => c.style.display = "none");
-        document.getElementById(id).style.display = "block";
-        document.querySelectorAll("nav button").forEach(b => b.classList.remove("active-nav"));
-        btn.classList.add("active-nav");
+/* =========================
+   CONFIGURAÇÃO SUPABASE
+========================= */
+
+/*
+SUBSTITUA PELOS DADOS DO SEU PROJETO
+*/
+
+const SUPABASE_URL = "SUA_URL_SUPABASE";
+const SUPABASE_KEY = "SUA_CHAVE_PUBLICA_SUPABASE";
+
+const supabaseClient = supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
+
+let veiculoAtual = null;
+
+/* =========================
+   TROCAR TELAS
+========================= */
+
+function abrirPagina(id){
+
+    document.querySelectorAll(".card")
+    .forEach(card => {
+        card.classList.remove("active");
+    });
+
+    document.getElementById(id)
+    .classList.add("active");
+
+    document.querySelectorAll("nav button")
+    .forEach(btn => {
+        btn.classList.remove("active");
+    });
+
+    if(id === "pesquisa"){
+        document.getElementById("btnPesquisa")
+        .classList.add("active");
     }
 
-    function cadastrarVeiculo(){
-        const placa = document.getElementById("placa").value.toUpperCase().trim();
-        const modelo = document.getElementById("modelo").value.trim();
-        const bloco = document.getElementById("bloco").value.trim();
-        const apto = document.getElementById("apartamento").value.trim();
-        const status = document.getElementById("statusCadastro");
+    if(id === "cadastro"){
+        document.getElementById("btnCadastro")
+        .classList.add("active");
+    }
+}
 
-        // 1. Verifica se os campos estão preenchidos
-        if(!placa || !modelo || !bloco || !apto){
-            status.innerHTML = `<div class="status error">Preencha todos os campos!</div>`;
+/* =========================
+   FORMATAR PLACA
+========================= */
+
+function formatarPlaca(valor){
+
+    return valor
+    .toUpperCase()
+    .replace(/[^A-Z0-9]/g,'')
+    .trim();
+}
+
+/* =========================
+   CADASTRAR
+========================= */
+
+async function cadastrarVeiculo(){
+
+    const placa = formatarPlaca(
+        document.getElementById("placa").value
+    );
+
+    const modelo =
+    document.getElementById("modelo").value.trim();
+
+    const bloco =
+    document.getElementById("bloco").value.trim();
+
+    const apartamento =
+    document.getElementById("apartamento").value.trim();
+
+    const status =
+    document.getElementById("statusCadastro");
+
+    const btn =
+    document.getElementById("btnSalvar");
+
+    if(!placa || !modelo || !bloco || !apartamento){
+
+        status.innerHTML = `
+        <div class="status error">
+            ⚠️ Preencha todos os campos.
+        </div>`;
+
+        return;
+    }
+
+    btn.disabled = true;
+    btn.innerText = "SALVANDO...";
+
+    try{
+
+        const { data: existe } = await supabaseClient
+        .from("veiculos")
+        .select("placa")
+        .eq("placa", placa)
+        .maybeSingle();
+
+        if(existe){
+
+            status.innerHTML = `
+            <div class="status error">
+                ⚠️ Placa já cadastrada.
+            </div>`;
+
+            btn.disabled = false;
+            btn.innerText = "SALVAR NO SISTEMA";
+
             return;
         }
 
-        // 2. CORREÇÃO: Verifica se a placa já existe no banco de dados (array veiculos)
-        const placaJaExiste = veiculos.some(v => v.placa === placa);
-        
-        if(placaJaExiste) {
-            status.innerHTML = `<div class="status error">⚠️ Atenção: A placa ${placa} já está cadastrada!</div>`;
-            return;
-        }
+        const { error } = await supabaseClient
+        .from("veiculos")
+        .insert([
+            {
+                placa,
+                modelo,
+                bloco,
+                apartamento
+            }
+        ]);
 
-        // 3. Se não existe, procede com o cadastro
-        veiculos.push({ placa, modelo, bloco, apartamento: apto });
-        localStorage.setItem("veiculos", JSON.stringify(veiculos));
-        status.innerHTML = `<div class="status success">✅ Salvo com Sucesso!</div>`;
-        
-        // Limpa campos e status
-        setTimeout(() => status.innerHTML = "", 3000);
-        ["placa", "modelo", "bloco", "apartamento"].forEach(id => document.getElementById(id).value = "");
-    }
+        if(error){
 
-    let veiculoAtual = null;
+            status.innerHTML = `
+            <div class="status error">
+                ❌ ${error.message}
+            </div>`;
 
-    function pesquisarVeiculo(){
-        const busca = document.getElementById("placaPesquisa").value.toUpperCase().trim();
-        const resDiv = document.getElementById("resultadoPesquisa");
-        const zapDiv = document.getElementById("areaWhatsApp");
-        
-        const v = veiculos.find(item => item.placa === busca);
-
-        if(v){
-            veiculoAtual = v;
-            resDiv.innerHTML = `
-                <div class="resultado-box">
-                    <div class="info-item"><span>🚘 Veículo:</span> <b>${v.modelo}</b></div>
-                    <div class="info-item"><span>🏢 Bloco:</span> <b>${v.bloco}</b></div>
-                    <div class="info-item"><span>🚪 Apto:</span> <b>${v.apartamento}</b></div>
-                </div>
-            `;
-            zapDiv.innerHTML = `<button class="btn btn-whatsapp" onclick="enviarWhatsApp()">📱 ENVIAR NOTIFICAÇÃO</button>`;
         } else {
-            veiculoAtual = null;
-            resDiv.innerHTML = `<div class="status error">❌ Placa não cadastrada.</div>`;
-            zapDiv.innerHTML = "";
+
+            status.innerHTML = `
+            <div class="status success">
+                ✅ Veículo cadastrado.
+            </div>`;
+
+            document.getElementById("placa").value = "";
+            document.getElementById("modelo").value = "";
+            document.getElementById("bloco").value = "";
+            document.getElementById("apartamento").value = "";
+
+            setTimeout(()=>{
+                status.innerHTML = "";
+            },3000);
         }
+
+    } catch(error){
+
+        status.innerHTML = `
+        <div class="status error">
+            ❌ Erro inesperado.
+        </div>`;
     }
 
-    function enviarWhatsApp(){
-        if(!veiculoAtual) return;
-        const msg = `*VEÍCULO SEM O CRACHÁ DE IDENTIFICAÇÃO *%0A%0A` +
-                    `🚘 *Veículo:* ${veiculoAtual.modelo}%0A` +
-                    `🏢 *Bloco:* ${veiculoAtual.bloco}%0A` +
-                    `🚪 *Apto:* ${veiculoAtual.apartamento}%0A` +
-                    `🆔 *Placa:* ${veiculoAtual.placa}`;
-        window.open(`https://api.whatsapp.com/send?text=${msg}`, '_blank');
+    btn.disabled = false;
+    btn.innerText = "SALVAR NO SISTEMA";
+}
+
+/* =========================
+   PESQUISAR
+========================= */
+
+async function pesquisarVeiculo(){
+
+    const placa = formatarPlaca(
+        document.getElementById("placaPesquisa").value
+    );
+
+    const resultado =
+    document.getElementById("resultadoPesquisa");
+
+    const areaWhatsapp =
+    document.getElementById("areaWhatsapp");
+
+    const placaDisplay =
+    document.getElementById("placaDisplay");
+
+    if(!placa) return;
+
+    resultado.innerHTML = `
+    <div class="status">
+        🔎 Buscando...
+    </div>`;
+
+    try{
+
+        const { data, error } = await supabaseClient
+        .from("veiculos")
+        .select("*")
+        .eq("placa", placa)
+        .maybeSingle();
+
+        if(data){
+
+            veiculoAtual = data;
+
+            placaDisplay.innerText = data.placa;
+
+            resultado.innerHTML = `
+
+            <div class="resultado">
+
+                <div class="item">
+                    <span>🚘 Veículo</span>
+                    <strong>${data.modelo}</strong>
+                </div>
+
+                <div class="item">
+                    <span>🏢 Bloco</span>
+                    <strong>${data.bloco}</strong>
+                </div>
+
+                <div class="item">
+                    <span>🚪 Apartamento</span>
+                    <strong>${data.apartamento}</strong>
+                </div>
+
+            </div>
+            `;
+
+            areaWhatsapp.innerHTML = `
+            <button
+            class="btn btn-whatsapp"
+            onclick="enviarWhatsapp()">
+
+            📱 ENVIAR NOTIFICAÇÃO
+
+            </button>
+            `;
+
+        } else {
+
+            veiculoAtual = null;
+
+            placaDisplay.innerText = "OFFLINE";
+
+            resultado.innerHTML = `
+            <div class="status error">
+                ❌ Placa não encontrada.
+            </div>`;
+
+            areaWhatsapp.innerHTML = "";
+        }
+
+    } catch(error){
+
+        resultado.innerHTML = `
+        <div class="status error">
+            ❌ Erro ao consultar banco.
+        </div>`;
     }
+}
+
+/* =========================
+   WHATSAPP
+========================= */
+
+function enviarWhatsapp(){
+
+    if(!veiculoAtual) return;
+
+    const mensagem =
+`*VEÍCULO SEM IDENTIFICAÇÃO*%0A%0A
+🚘 Veículo: ${veiculoAtual.modelo}%0A
+🏢 Bloco: ${veiculoAtual.bloco}%0A
+🚪 Apartamento: ${veiculoAtual.apartamento}%0A
+🆔 Placa: ${veiculoAtual.placa}`;
+
+    /*
+    TROQUE PELO NÚMERO REAL
+    */
+
+    const numero = "5511999999999";
+
+    window.open(
+        `https://wa.me/${numero}?text=${mensagem}`,
+        "_blank"
+    );
+}
+
+/* =========================
+   ENTER PESQUISA
+========================= */
+
+document
+.getElementById("placaPesquisa")
+.addEventListener("keypress", function(event){
+
+    if(event.key === "Enter"){
+        pesquisarVeiculo();
+    }
+});
+
 </script>
 
 </body>
