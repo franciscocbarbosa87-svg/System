@@ -1,862 +1,674 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>System Plate - Segurança Condominial</title>
-
-<!-- SUPABASE -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<!-- FONTES -->
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=Orbitron:wght@700&display=swap" rel="stylesheet">
-
-<style>
-
-/* =========================
-   RESET
-========================= */
-
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
-
-/* =========================
-   VARIÁVEIS
-========================= */
-
-:root{
-    --primary:#00d2ff;
-    --secondary:#3a7bd5;
-    --accent:#25D366;
-    --dark:#0a0f1a;
-    --glass:rgba(255,255,255,0.05);
-    --border:rgba(255,255,255,0.1);
-    --text:#e0e6ed;
-    --error:#ff4d4d;
-}
-
-/* =========================
-   BODY
-========================= */
-
-body{
-
-    font-family:'Plus Jakarta Sans',sans-serif;
-
-    background:
-    radial-gradient(circle at top left, rgba(58,123,213,0.2), transparent 40%),
-    radial-gradient(circle at bottom right, rgba(0,210,255,0.1), transparent 40%),
-    var(--dark);
-
-    color:var(--text);
-
-    min-height:100vh;
-
-    display:flex;
-    flex-direction:column;
-}
-
-/* =========================
-   HEADER
-========================= */
-
-header{
-    text-align:center;
-    padding:35px 20px 20px;
-}
-
-.logo{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:15px;
-}
-
-.logo-icon{
-
-    width:55px;
-    height:55px;
-
-    border-radius:14px;
-
-    background:linear-gradient(135deg,var(--primary),var(--secondary));
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
-    font-size:24px;
-    font-family:'Orbitron',sans-serif;
-
-    color:white;
-
-    box-shadow:0 0 25px rgba(0,210,255,0.5);
-}
-
-.logo h1{
-    font-size:30px;
-    font-family:'Orbitron',sans-serif;
-
-    background:linear-gradient(to right,#fff,var(--primary));
-
-    -webkit-background-clip:text;
-    -webkit-text-fill-color:transparent;
-}
-
-.sub{
-    margin-top:15px;
-    font-size:0.8rem;
-    color:#b5c3d1;
-    letter-spacing:1px;
-}
-
-/* =========================
-   NAV
-========================= */
-
-nav{
-    display:flex;
-    justify-content:center;
-    gap:12px;
-
-    margin:25px 0;
-}
-
-nav button{
-
-    padding:12px 22px;
-
-    border:none;
-    border-radius:30px;
-
-    background:var(--glass);
-
-    border:1px solid var(--border);
-
-    color:white;
-
-    cursor:pointer;
-
-    font-weight:700;
-
-    transition:0.3s;
-}
-
-nav button.active{
-    background:white;
-    color:#000;
-}
-
-/* =========================
-   CONTAINER
-========================= */
-
-.container{
-    width:100%;
-    max-width:450px;
-
-    margin:auto;
-
-    padding:0 20px 30px;
-}
-
-/* =========================
-   CARD
-========================= */
-
-.card{
-
-    display:none;
-
-    background:var(--glass);
-
-    border:1px solid var(--border);
-
-    border-radius:25px;
-
-    backdrop-filter:blur(20px);
-
-    padding:30px;
-}
-
-.card.active{
-    display:block;
-}
-
-/* =========================
-   PLACA
-========================= */
-
-.placa{
-
-    width:170px;
-    height:70px;
-
-    margin:0 auto 25px;
-
-    background:white;
-
-    border-radius:8px;
-
-    overflow:hidden;
-
-    border:2px solid #333;
-}
-
-.placa-topo{
-
-    background:#003399;
-
-    color:white;
-
-    font-size:10px;
-
-    font-weight:800;
-
-    text-align:center;
-
-    padding:4px;
-}
-
-.placa-numero{
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
-    height:calc(100% - 20px);
-
-    color:#111;
-
-    font-size:24px;
-    font-weight:900;
-
-    letter-spacing:3px;
-}
-
-/* =========================
-   INPUTS
-========================= */
-
-.input-group{
-    margin-bottom:18px;
-}
-
-label{
-    display:block;
-    margin-bottom:8px;
-
-    color:var(--primary);
-
-    font-size:0.85rem;
-    font-weight:700;
-}
-
-input{
-
-    width:100%;
-
-    padding:14px;
-
-    border-radius:12px;
-
-    border:1px solid var(--border);
-
-    background:rgba(0,0,0,0.4);
-
-    color:white;
-
-    outline:none;
-
-    font-size:1rem;
-}
-
-/* =========================
-   BOTÕES
-========================= */
-
-.btn{
-
-    width:100%;
-
-    padding:15px;
-
-    border:none;
-
-    border-radius:14px;
-
-    cursor:pointer;
-
-    font-weight:800;
-
-    transition:0.3s;
-}
-
-.btn-primary{
-    background:linear-gradient(135deg,var(--primary),var(--secondary));
-    color:white;
-}
-
-.btn-primary:hover{
-    transform:translateY(-2px);
-}
-
-.btn-whatsapp{
-    margin-top:18px;
-    background:var(--accent);
-    color:white;
-}
-
-.btn-back{
-    margin-bottom:20px;
-
-    background:transparent;
-
-    border:1px solid var(--border);
-
-    color:white;
-
-    padding:10px 15px;
-
-    border-radius:12px;
-
-    cursor:pointer;
-}
-
-/* =========================
-   RESULTADO
-========================= */
-
-.resultado{
-
-    margin-top:20px;
-
-    border-radius:15px;
-
-    overflow:hidden;
-
-    border:1px solid var(--border);
-}
-
-.item{
-
-    display:flex;
-    justify-content:space-between;
-
-    padding:14px;
-
-    background:rgba(255,255,255,0.03);
-
-    border-bottom:1px solid var(--border);
-}
-
-.item:last-child{
-    border:none;
-}
-
-/* =========================
-   STATUS
-========================= */
-
-.status{
-
-    margin-top:18px;
-
-    padding:14px;
-
-    border-radius:12px;
-
-    text-align:center;
-
-    font-weight:700;
-}
-
-.success{
-    background:rgba(37,211,102,0.1);
-    color:#25D366;
-}
-
-.error{
-    background:rgba(255,77,77,0.1);
-    color:var(--error);
-}
-
-/* =========================
-   FOOTER
-========================= */
-
-footer{
-    text-align:center;
-    padding:20px;
-    font-size:0.75rem;
-    color:#8190a5;
-}
-
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Plate - Firebase Realtime</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=Orbitron:wght@700&display=swap" rel="stylesheet">
+
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
+
+    <style>
+        :root {
+            --primary: #00d2ff;
+            --secondary: #3a7bd5;
+            --accent: #25D366;
+            --bg-dark: #0a0f1a;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --neon-glow: #00d2ff;
+            --red-neon: #ff0000;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image:
+                radial-gradient(at 0% 0%, rgba(58, 123, 213, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(0, 210, 255, 0.1) 0px, transparent 50%);
+            color: #e0e6ed;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            padding: 40px 20px 10px;
+            text-align: center;
+        }
+
+        .header-main {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .logo-icon {
+            width: 52px;
+            height: 52px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 24px;
+            color: white;
+            box-shadow: 0 0 20px var(--red-neon);
+            animation: logoPulseRed 2s infinite alternate;
+        }
+
+        @keyframes logoPulseRed {
+            from {
+                box-shadow: 0 0 10px var(--red-neon);
+            }
+            to {
+                box-shadow: 0 0 25px var(--red-neon), 0 0 40px rgba(255, 0, 0, 0.5);
+            }
+        }
+
+        header h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 28px;
+            background: linear-gradient(to right, #fff, var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .sub-titulo {
+            font-size: 0.70rem;
+            color: #fff;
+            font-weight: 600;
+            margin: 18px 0;
+            letter-spacing: 1px;
+            text-shadow: 0 0 5px var(--neon-glow);
+            animation: neonPulse 1.5s infinite alternate;
+        }
+
+        @keyframes neonPulse {
+            from { opacity: 0.8; }
+            to { opacity: 1; }
+        }
+
+        nav {
+            display: none;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        nav.visible {
+            display: flex;
+        }
+
+        nav button {
+            padding: 12px 24px;
+            border-radius: 30px;
+            border: 1px solid var(--glass-border);
+            background: var(--card-bg);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        nav button.active-nav {
+            background: white;
+            color: var(--bg-dark);
+            border-color: white;
+        }
+
+        .container {
+            max-width: 420px;
+            margin: 0 auto;
+            padding: 0 20px 20px;
+            flex: 1;
+            width: 100%;
+        }
+
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 30px;
+            text-align: center;
+            display: none;
+        }
+
+        .card.active {
+            display: block;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .placa-mercosul {
+            width: 160px;
+            height: 65px;
+            background: white;
+            border-radius: 6px;
+            border: 2px solid #333;
+            margin: 0 auto 30px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .placa-topo {
+            background: #003399;
+            height: 18px;
+            color: white;
+            font-size: 8px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .placa-corpo {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #111;
+            font-size: 20px;
+            font-weight: 900;
+            letter-spacing: 2px;
+        }
+
+        .input-group {
+            text-align: left;
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 0.8rem;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+            background: rgba(0, 0, 0, 0.4);
+            color: white;
+            outline: none;
+            font-size: 1rem;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .btn-whatsapp {
+            background: var(--accent);
+            color: white;
+            margin-top: 20px;
+        }
+
+        .btn-voltar {
+            margin-top: 15px;
+            padding: 10px 18px;
+            border-radius: 10px;
+            border: none;
+            background: rgba(255,255,255,0.08);
+            color: white;
+            cursor: pointer;
+            font-size: 0.85rem;
+            width: auto;
+        }
+
+        .resultado-box {
+            margin-top: 20px;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            text-align: left;
+        }
+
+        .info-item {
+            padding: 14px;
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .info-item:last-child {
+            border: none;
+        }
+
+        .status {
+            padding: 12px;
+            border-radius: 10px;
+            margin-top: 15px;
+            font-size: 0.9rem;
+        }
+
+        .error {
+            background: rgba(255, 77, 77, 0.1);
+            color: #ff4d4d;
+        }
+
+        .success {
+            background: rgba(37, 211, 102, 0.1);
+            color: #25D366;
+        }
+
+        .warning {
+            background: rgba(255, 193, 7, 0.1);
+            color: #ffc107;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 0.7rem;
+            color: #8899a6;
+        }
+    </style>
 </head>
-
 <body>
 
 <header>
-
-    <div class="logo">
-
-        <div class="logo-icon">
-            S
-        </div>
-
+    <div class="header-main">
+        <div class="logo-icon">S</div>
         <h1>System Plate</h1>
-
     </div>
 
-    <div class="sub">
-        🛡️ SISTEMA CLOUD PARA CONDOMÍNIO
+    <div class="sub-titulo">
+        🛡️ SISTEMA EM NUVEM PARA USO INTERNO
     </div>
-
 </header>
 
-<nav>
-
-    <button
-    class="active"
-    id="btnPesquisa"
-    onclick="abrirPagina('pesquisa')">
-    🔍 Buscar
+<nav id="mainNav">
+    <button class="active-nav" onclick="abrirPagina('pesquisa', this)">
+        🔍 Buscar
     </button>
 
-    <button
-    id="btnCadastro"
-    onclick="abrirPagina('cadastro')">
-    ➕ Cadastrar
+    <button onclick="abrirPagina('cadastro', this)">
+        ➕ Cadastrar
     </button>
 
+    <button onclick="location.reload()" style="color:#ff4d4d;">
+        Logout
+    </button>
 </nav>
 
-<div class="container">
+<main class="container">
 
-    <!-- PESQUISA -->
+    <!-- LOGIN -->
+    <section id="login" class="card active">
+        <h2 style="color:var(--primary); margin-bottom:25px;">
+            LOGIN DO SISTEMA
+        </h2>
 
-    <section id="pesquisa" class="card active">
-
-        <div class="placa">
-
-            <div class="placa-topo">
-                BRASIL
-            </div>
-
-            <div class="placa-numero" id="placaDisplay">
-                SYS2026
-            </div>
-
+        <div class="input-group">
+            <label>Usuário</label>
+            <input type="text" id="user" placeholder="Usuário">
         </div>
 
         <div class="input-group">
-
-            <label>Placa do Veículo</label>
-
-            <input
-            type="text"
-            id="placaPesquisa"
-            placeholder="Digite a placa">
-
+            <label>Senha</label>
+            <input type="password" id="pass" placeholder="Senha">
         </div>
 
-        <button
-        class="btn btn-primary"
-        onclick="pesquisarVeiculo()">
+        <button class="btn btn-primary" onclick="realizarLogin()">
+            ACESSAR BANCO DE DADOS
+        </button>
 
-        CONSULTAR AGORA
+        <div id="loginStatus"></div>
+    </section>
 
+    <!-- PESQUISA -->
+    <section id="pesquisa" class="card">
+
+        <div class="placa-mercosul">
+            <div class="placa-topo">BRASIL</div>
+            <div class="placa-corpo">SEARCH</div>
+        </div>
+
+        <div class="input-group">
+            <label style="text-align:center; width:100%;">
+                PLACA DO VEÍCULO
+            </label>
+
+            <input
+                type="text"
+                id="placaPesquisa"
+                placeholder="DIGITE A PLACA..."
+                style="text-transform:uppercase; text-align:center;"
+            >
+        </div>
+
+        <button class="btn btn-primary" onclick="pesquisarVeiculo()">
+            CONSULTAR AGORA
         </button>
 
         <div id="resultadoPesquisa"></div>
 
-        <div id="areaWhatsapp"></div>
+        <div id="areaWhatsApp"></div>
+
+        <button class="btn-voltar" onclick="limparPesquisa()">
+            ← Voltar
+        </button>
 
     </section>
 
     <!-- CADASTRO -->
-
     <section id="cadastro" class="card">
 
-        <button
-        class="btn-back"
-        onclick="abrirPagina('pesquisa')">
-
-        ← Voltar
-
-        </button>
+        <h2 style="margin-bottom:25px; color:var(--primary);">
+            NOVO REGISTRO
+        </h2>
 
         <div class="input-group">
-
             <label>Placa</label>
-
             <input
-            type="text"
-            id="placa"
-            placeholder="ABC1234">
-
+                type="text"
+                id="placa"
+                placeholder="Digite a placa"
+                style="text-transform:uppercase;"
+            >
         </div>
 
         <div class="input-group">
-
             <label>Modelo / Cor</label>
-
             <input
-            type="text"
-            id="modelo"
-            placeholder="Corolla Branco">
+                type="text"
+                id="modelo"
+                placeholder="Ex: Corolla Branco"
+            >
+        </div>
+
+        <div style="display:flex; gap:10px;">
+
+            <div class="input-group" style="flex:1;">
+                <label>Bloco</label>
+                <input type="text" id="bloco" placeholder="Nº">
+            </div>
+
+            <div class="input-group" style="flex:1;">
+                <label>Apto</label>
+                <input type="text" id="apartamento" placeholder="Nº">
+            </div>
 
         </div>
 
-        <div class="input-group">
-
-            <label>Bloco</label>
-
-            <input
-            type="text"
-            id="bloco"
-            placeholder="Bloco">
-
-        </div>
-
-        <div class="input-group">
-
-            <label>Apartamento</label>
-
-            <input
-            type="text"
-            id="apartamento"
-            placeholder="Apartamento">
-
-        </div>
-
-        <button
-        class="btn btn-primary"
-        id="btnSalvar"
-        onclick="cadastrarVeiculo()">
-
-        SALVAR NO SISTEMA
-
+        <button class="btn btn-primary" onclick="cadastrarVeiculo()">
+            SALVAR NO FIREBASE
         </button>
 
         <div id="statusCadastro"></div>
 
+        <button class="btn-voltar" onclick="limparCadastro()">
+            ← Voltar
+        </button>
+
     </section>
 
-</div>
+</main>
 
 <footer>
-Francisco © 2026 | Cloud DB v2.0
+    Francisco © 2026 | Gestão de Acesso v0.05
 </footer>
 
 <script>
 
-/* =========================
-   CONFIGURAÇÃO SUPABASE
-========================= */
+    // FIREBASE
+    const firebaseConfig = {
+        apiKey: "AIzaSyAX1zG5x9ftv7oJRobNnrbPjBGwVSdYjQY",
+        authDomain: "system-plate-fc82a.firebaseapp.com",
+        databaseURL: "https://system-plate-fc82a-default-rtdb.firebaseio.com",
+        projectId: "system-plate-fc82a",
+        storageBucket: "system-plate-fc82a.firebasestorage.app",
+        messagingSenderId: "407661799997",
+        appId: "1:407661799997:web:5d1be7dc34764422db5854"
+    };
 
-/*
-SUBSTITUA PELOS DADOS DO SEU PROJETO
-*/
+    firebase.initializeApp(firebaseConfig);
 
-const SUPABASE_URL = "SUA_URL_SUPABASE";
-const SUPABASE_KEY = "SUA_CHAVE_PUBLICA_SUPABASE";
+    const database = firebase.database();
 
-const supabaseClient = supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-);
+    // LOGIN
+    function realizarLogin() {
 
-let veiculoAtual = null;
+        const u = document.getElementById("user").value;
+        const p = document.getElementById("pass").value;
 
-/* =========================
-   TROCAR TELAS
-========================= */
+        const status = document.getElementById("loginStatus");
 
-function abrirPagina(id){
+        if (u === "admin" && p === "1234") {
 
-    document.querySelectorAll(".card")
-    .forEach(card => {
-        card.classList.remove("active");
-    });
+            document.getElementById("login").classList.remove("active");
 
-    document.getElementById(id)
-    .classList.add("active");
+            document.getElementById("mainNav").classList.add("visible");
 
-    document.querySelectorAll("nav button")
-    .forEach(btn => {
-        btn.classList.remove("active");
-    });
+            document.getElementById("pesquisa").classList.add("active");
 
-    if(id === "pesquisa"){
-        document.getElementById("btnPesquisa")
-        .classList.add("active");
+        } else {
+
+            status.innerHTML =
+                `<div class="status error">❌ Dados incorretos!</div>`;
+        }
     }
 
-    if(id === "cadastro"){
-        document.getElementById("btnCadastro")
-        .classList.add("active");
-    }
-}
+    // NAVEGAÇÃO
+    function abrirPagina(id, btn) {
 
-/* =========================
-   FORMATAR PLACA
-========================= */
+        document.querySelectorAll(".card")
+            .forEach(c => c.classList.remove("active"));
 
-function formatarPlaca(valor){
+        document.getElementById(id)
+            .classList.add("active");
 
-    return valor
-    .toUpperCase()
-    .replace(/[^A-Z0-9]/g,'')
-    .trim();
-}
+        document.querySelectorAll("nav button")
+            .forEach(b => b.classList.remove("active-nav"));
 
-/* =========================
-   CADASTRAR
-========================= */
-
-async function cadastrarVeiculo(){
-
-    const placa = formatarPlaca(
-        document.getElementById("placa").value
-    );
-
-    const modelo =
-    document.getElementById("modelo").value.trim();
-
-    const bloco =
-    document.getElementById("bloco").value.trim();
-
-    const apartamento =
-    document.getElementById("apartamento").value.trim();
-
-    const status =
-    document.getElementById("statusCadastro");
-
-    const btn =
-    document.getElementById("btnSalvar");
-
-    if(!placa || !modelo || !bloco || !apartamento){
-
-        status.innerHTML = `
-        <div class="status error">
-            ⚠️ Preencha todos os campos.
-        </div>`;
-
-        return;
+        btn.classList.add("active-nav");
     }
 
-    btn.disabled = true;
-    btn.innerText = "SALVANDO...";
+    // CADASTRAR VEÍCULO
+    function cadastrarVeiculo() {
 
-    try{
+        const placa = document.getElementById("placa")
+            .value.toUpperCase().trim();
 
-        const { data: existe } = await supabaseClient
-        .from("veiculos")
-        .select("placa")
-        .eq("placa", placa)
-        .maybeSingle();
+        const modelo = document.getElementById("modelo")
+            .value.trim();
 
-        if(existe){
+        const bloco = document.getElementById("bloco")
+            .value.trim();
 
-            status.innerHTML = `
-            <div class="status error">
-                ⚠️ Placa já cadastrada.
-            </div>`;
+        const apto = document.getElementById("apartamento")
+            .value.trim();
 
-            btn.disabled = false;
-            btn.innerText = "SALVAR NO SISTEMA";
+        const status = document.getElementById("statusCadastro");
+
+        if (!placa || !modelo || !bloco || !apto) {
+
+            status.innerHTML =
+                `<div class="status error">⚠️ Preencha todos os campos!</div>`;
 
             return;
         }
 
-        const { error } = await supabaseClient
-        .from("veiculos")
-        .insert([
-            {
-                placa,
-                modelo,
-                bloco,
-                apartamento
-            }
-        ]);
+        // VERIFICA SE A PLACA JÁ EXISTE
+        database.ref('veiculos/' + placa)
+            .once('value')
+            .then((snapshot) => {
 
-        if(error){
+                if (snapshot.exists()) {
 
-            status.innerHTML = `
-            <div class="status error">
-                ❌ ${error.message}
-            </div>`;
+                    status.innerHTML =
+                        `<div class="status warning">⚠️ Esta placa já está cadastrada no sistema!</div>`;
 
-        } else {
+                    return;
+                }
 
-            status.innerHTML = `
-            <div class="status success">
-                ✅ Veículo cadastrado.
-            </div>`;
+                // SALVA
+                database.ref('veiculos/' + placa).set({
+                    placa: placa,
+                    modelo: modelo,
+                    bloco: bloco,
+                    apartamento: apto
+                })
+                .then(() => {
 
-            document.getElementById("placa").value = "";
-            document.getElementById("modelo").value = "";
-            document.getElementById("bloco").value = "";
-            document.getElementById("apartamento").value = "";
+                    status.innerHTML =
+                        `<div class="status success">✅ Veículo cadastrado com sucesso!</div>`;
 
-            setTimeout(()=>{
-                status.innerHTML = "";
-            },3000);
-        }
+                    limparCadastro();
 
-    } catch(error){
+                })
+                .catch((e) => {
 
-        status.innerHTML = `
-        <div class="status error">
-            ❌ Erro inesperado.
-        </div>`;
+                    status.innerHTML =
+                        `<div class="status error">Erro ao salvar: ${e.message}</div>`;
+                });
+
+            });
     }
 
-    btn.disabled = false;
-    btn.innerText = "SALVAR NO SISTEMA";
-}
+    // PESQUISAR VEÍCULO
+    function pesquisarVeiculo() {
 
-/* =========================
-   PESQUISAR
-========================= */
+        const busca = document.getElementById("placaPesquisa")
+            .value.toUpperCase().trim();
 
-async function pesquisarVeiculo(){
+        const resDiv = document.getElementById("resultadoPesquisa");
 
-    const placa = formatarPlaca(
-        document.getElementById("placaPesquisa").value
-    );
+        const zapDiv = document.getElementById("areaWhatsApp");
 
-    const resultado =
-    document.getElementById("resultadoPesquisa");
+        if (!busca) return;
 
-    const areaWhatsapp =
-    document.getElementById("areaWhatsapp");
+        database.ref('veiculos/' + busca)
+            .once('value')
+            .then((snapshot) => {
 
-    const placaDisplay =
-    document.getElementById("placaDisplay");
+                const v = snapshot.val();
 
-    if(!placa) return;
+                if (v) {
 
-    resultado.innerHTML = `
-    <div class="status">
-        🔎 Buscando...
-    </div>`;
+                    resDiv.innerHTML = `
+                        <div class="resultado-box">
 
-    try{
+                            <div class="info-item">
+                                <span>🚘 Veículo:</span>
+                                <b>${v.modelo}</b>
+                            </div>
 
-        const { data, error } = await supabaseClient
-        .from("veiculos")
-        .select("*")
-        .eq("placa", placa)
-        .maybeSingle();
+                            <div class="info-item">
+                                <span>🏢 Bloco:</span>
+                                <b>${v.bloco}</b>
+                            </div>
 
-        if(data){
+                            <div class="info-item">
+                                <span>🚪 Apto:</span>
+                                <b>${v.apartamento}</b>
+                            </div>
 
-            veiculoAtual = data;
+                        </div>
+                    `;
 
-            placaDisplay.innerText = data.placa;
+                    zapDiv.innerHTML = `
+                        <button
+                            class="btn btn-whatsapp"
+                            onclick="enviarWhatsApp(
+                                '${v.modelo}',
+                                '${v.bloco}',
+                                '${v.apartamento}',
+                                '${v.placa}'
+                            )"
+                        >
+                            📱 NOTIFICAR VIA WHATSAPP
+                        </button>
+                    `;
 
-            resultado.innerHTML = `
+                } else {
 
-            <div class="resultado">
+                    resDiv.innerHTML =
+                        `<div class="status error">❌ Placa não encontrada na nuvem.</div>`;
 
-                <div class="item">
-                    <span>🚘 Veículo</span>
-                    <strong>${data.modelo}</strong>
-                </div>
-
-                <div class="item">
-                    <span>🏢 Bloco</span>
-                    <strong>${data.bloco}</strong>
-                </div>
-
-                <div class="item">
-                    <span>🚪 Apartamento</span>
-                    <strong>${data.apartamento}</strong>
-                </div>
-
-            </div>
-            `;
-
-            areaWhatsapp.innerHTML = `
-            <button
-            class="btn btn-whatsapp"
-            onclick="enviarWhatsapp()">
-
-            📱 ENVIAR NOTIFICAÇÃO
-
-            </button>
-            `;
-
-        } else {
-
-            veiculoAtual = null;
-
-            placaDisplay.innerText = "OFFLINE";
-
-            resultado.innerHTML = `
-            <div class="status error">
-                ❌ Placa não encontrada.
-            </div>`;
-
-            areaWhatsapp.innerHTML = "";
-        }
-
-    } catch(error){
-
-        resultado.innerHTML = `
-        <div class="status error">
-            ❌ Erro ao consultar banco.
-        </div>`;
+                    zapDiv.innerHTML = "";
+                }
+            });
     }
-}
 
-/* =========================
-   WHATSAPP
-========================= */
+    // WHATSAPP
+    function enviarWhatsApp(mod, blo, apt, pla) {
 
-function enviarWhatsapp(){
+        const msg =
+            `*AVISO DE SEGURANÇA*%0A%0A` +
+            `Identificamos o veículo abaixo sem o crachá de identificação no condomínio:%0A` +
+            `🚘 *Veículo:* ${mod}%0A` +
+            `🏢 *Local:* Bloco ${blo} / Apto ${apt}%0A` +
+            `🆔 *Placa:* ${pla}`;
 
-    if(!veiculoAtual) return;
-
-    const mensagem =
-`*VEÍCULO SEM IDENTIFICAÇÃO*%0A%0A
-🚘 Veículo: ${veiculoAtual.modelo}%0A
-🏢 Bloco: ${veiculoAtual.bloco}%0A
-🚪 Apartamento: ${veiculoAtual.apartamento}%0A
-🆔 Placa: ${veiculoAtual.placa}`;
-
-    /*
-    TROQUE PELO NÚMERO REAL
-    */
-
-    const numero = "5511999999999";
-
-    window.open(
-        `https://wa.me/${numero}?text=${mensagem}`,
-        "_blank"
-    );
-}
-
-/* =========================
-   ENTER PESQUISA
-========================= */
-
-document
-.getElementById("placaPesquisa")
-.addEventListener("keypress", function(event){
-
-    if(event.key === "Enter"){
-        pesquisarVeiculo();
+        window.open(
+            `https://api.whatsapp.com/send?text=${msg}`,
+            '_blank'
+        );
     }
-});
+
+    // BOTÃO VOLTAR PESQUISA
+    function limparPesquisa() {
+
+        document.getElementById("placaPesquisa").value = "";
+
+        document.getElementById("resultadoPesquisa").innerHTML = "";
+
+        document.getElementById("areaWhatsApp").innerHTML = "";
+    }
+
+    // BOTÃO VOLTAR CADASTRO
+    function limparCadastro() {
+
+        document.getElementById("placa").value = "";
+
+        document.getElementById("modelo").value = "";
+
+        document.getElementById("bloco").value = "";
+
+        document.getElementById("apartamento").value = "";
+    }
 
 </script>
 
